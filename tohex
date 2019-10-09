@@ -1,4 +1,5 @@
 #! /bin/python
+# Translate ascii string to hex.
 import sys
 
 if len(sys.argv) == 1:
