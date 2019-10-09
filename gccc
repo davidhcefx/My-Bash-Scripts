@@ -1,6 +1,7 @@
 #! /bin/bash
 #
 # My customized C compiler.
+# You can create aliases like gcccc, gccccc, etc, all pointing to this file, in case you typed more than three 'c'.
 # Written by davidhcefx, edited in 2018.11.20
 
 gettype() {
