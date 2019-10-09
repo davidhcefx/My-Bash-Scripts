@@ -1,0 +1,42 @@
+#! /bin/bash
+#
+# Utility function for listing the trash can, for there is no way to sort
+# the files by deletion date. Written by davidhcefx, 2017.12.04.
+
+help(){
+	echo "Syntax: "
+	echo "	recyclebin list - List all, sorted by deletion date."
+	echo "	recyclebin recover [name] - Recover a file to ~/."
+	echo "	recyclebin remove [2017-12] - Remove all files deleted in [date].
+"
+}
+
+tmp=/tmp/recycle.tmp
+cd ~/.local/share/Trash/files
+case $1 in
+	list)
+		stat -c "%.19z - %n" * | sort -t'-'
+	;;
+	recover)
+		if (( $# < 2 )); then help; exit; fi
+
+		mv $2 ~/
+	;;
+	remove)
+		if (( $# < 2 )); then help; exit; fi
+
+		stat -c "%.7z /%n" * | grep ^$2 > $tmp
+		cat $tmp
+		echo ""
+		read -p "Are you sure you want to remove these files? [y/n] " -n 1 ch
+		if [ $ch == y ]; then
+			while read line; do
+				rm -r "${line#*/}"
+			done < $tmp
+		fi
+		rm $tmp
+	;;
+	*)
+		help
+	;;
+esac
