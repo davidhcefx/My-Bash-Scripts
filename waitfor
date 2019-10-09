@@ -1,0 +1,28 @@
+#! /bin/bash
+
+# Wait for a proccess and take action when it ended.
+# Created by davidhcefx, 2019.6.27.
+
+# Modify the parameters below.
+interval=300
+action="shutdown now"
+
+
+help() {
+	echo "Syntax: waitfor [pid]"
+}
+
+if [ $# == 0 ]; then help; exit; fi
+s=$(ps --pid $1 | grep $1)
+if [ "$s" == "" ]; then echo "pid $1 currently not running!"; exit; fi
+
+echo "Action: '$action'"
+echo "Waiting for..."
+ps --pid $1
+while true; do
+	sleep $interval
+	s=$(ps --pid $1 | grep $1)
+	if [ "$s" == "" ]; then break; fi
+done
+echo "Taking action..."
+$action
