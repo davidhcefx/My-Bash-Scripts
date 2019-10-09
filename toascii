@@ -1,0 +1,10 @@
+#! /bin/python
+import sys
+
+if len(sys.argv) == 1:
+	print('toascii [hex]')
+else:
+	sys.argv = sys.argv[1:]
+	for x in sys.argv:
+		print(chr(int(x, 16)), end=' ')
+	print('')
