@@ -2,6 +2,7 @@
 #
 # This script is for adjusting the volume in a finer granularity.
 # You can map a hotkey with this script, eg. Shift + VolumeIncrement -> `myvol add`.
+# Be sufe to install 'alsa-utils' from Ubuntu apt-get.
 
 showInfo(){
 	echo "Aliases:"
