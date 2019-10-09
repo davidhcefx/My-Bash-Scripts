@@ -1,0 +1,17 @@
+#! /bin/bash
+#
+# A script for making compression-with-encryption easier.
+
+if [ $# != 1 ]; then
+	echo "Syntax: zipencrypt [file]"
+	echo "Note that it would generate a file ended in .zip"
+	exit
+fi
+case $1 in
+  *.zip)
+	zip $1.zip --encrypt $1 ;;
+  *.*)
+	zip ${1%.*}.zip --encrypt $1 ;;
+  *)
+	zip $1.zip --encrypt $1 ;;
+esac
