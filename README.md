@@ -1,2 +1,5 @@
-# Bash-Scripts
-Bash Scripts created for making the life easier.
+# My Bash Scripts
+Some Bash/Python scripts created for making the life easier.
+
+## Usage
+Most of the files are intended to be placed in ~/bin, which is included in the PATH variable by default in most Unix systems. Make them executable by this command: `chmod +x <filename>`.
