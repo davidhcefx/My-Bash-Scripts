@@ -1,0 +1,18 @@
+#! /bin/bash
+#
+# Convert Cygwin path to Windows path
+
+path="$1"
+
+# Replace cygdrive or add C:\cygwin64
+case "$path" in
+/cygdrive/c/*)
+	path="C:${path#/cygdrive/c}"
+	;;
+*)
+	path="C:\cygwin64$path"
+	;;
+esac
+
+# Change to backslashes
+echo "$path" | sed 's:/:\\:g'
