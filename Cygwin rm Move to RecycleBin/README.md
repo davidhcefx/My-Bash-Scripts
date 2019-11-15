@@ -1,10 +1,10 @@
 # How to install #
 
-1. Go to "http://www.maddogsw.com/cmdutils/", download the zip, and then just take out "Recycle.exe".
+1. Go to http://www.maddogsw.com/cmdutils/, download the zip, and then just take out **Recycle.exe**.
 
-2. Download the script "toWinPath" from here: "https://github.com/davidhcefx/My-Bash-Scripts/blob/master/toWinPath"
+2. Download the script **toWinPath** from here: https://github.com/davidhcefx/My-Bash-Scripts/blob/master/toWinPath.
 
-3. Make the above two files "callable" and "runnable".
+3. Make the above two files *callable* and *runnable*, namely:
 
 	3-1) `chmod +x toWinPath`.
 
