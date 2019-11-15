@@ -1,6 +1,6 @@
 # How to install #
 
-1. Go to http://www.maddogsw.com/cmdutils/, download the zip, and then take out only the **Recycle.exe**.
+1. Go to http://www.maddogsw.com/cmdutils/, download the zip, and then take out only **Recycle.exe**.
 
 2. Download the script **toWinPath** from here: https://github.com/davidhcefx/My-Bash-Scripts/blob/master/toWinPath.
 
