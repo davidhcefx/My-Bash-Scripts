@@ -1,0 +1,66 @@
+#! /bin/bash
+#
+# My customized C compiler.
+# You can create aliases like gcccc, gccccc, etc, all pointing to this file, in case you typed more than three 'c'.
+# Written by davidhcefx, edited in 2018.11.20
+
+gettype() {
+	if [ -f "$1".cpp ]; then
+		echo "cpp"
+	elif [ -f "$1".c ]; then
+		echo "c"
+	else
+		echo "error: couldn't find C-type file" >&2
+	fi
+}
+
+name=
+type=
+case "$1" in
+*.cpp)
+	name="${1%.cpp}"
+	type="cpp"
+	;;
+*.c)
+	name="${1%.c}"
+	type="c"
+	;;
+*.)  # sometimes you just don't want to type the .cpp/.c
+	name="${1%.}"
+	type=$(gettype "$name")
+	;;
+*)
+	name="$1"
+	type=$(gettype "$name")
+	;;
+esac
+
+case $type in
+cpp)
+	cc="g++"
+	opt="-std=c++11"
+	;;
+c)
+	cc="gcc"
+	opt=
+	;;
+*)
+	exit 1
+esac
+
+echo $'\E[2;38m================== Compiler ==================\E[m'
+$cc  $opt -Wextra -Wall -c "$name".$type -o "$name".o
+if [ $? != 0 ]; then exit 1; fi
+
+echo $'\E[2;38m=================== Linker ===================\E[m'
+$cc  "$name".o -o "$name".out
+if [ $? != 0 ]; then exit 1; fi
+rm "$name".o
+
+printf "\E[2;38m> Hit enter to run '$name.out' \E[m"
+read -n 1 ch
+if [ "$ch" == "" ]; then
+	./"$name".out
+else
+	echo ""
+fi
