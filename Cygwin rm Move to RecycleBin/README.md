@@ -1,4 +1,5 @@
-# How to install #
+# A rm replacement on Cygwin.
+## How to install
 
 1. Go to http://www.maddogsw.com/cmdutils/, download the zip, and then take out only **Recycle.exe**.
 
