@@ -38,18 +38,18 @@ esac
 case $type in
 cpp)
 	cc="g++"
-	opt="-std=c++11"
+	opt="-std=c++11 -Wextra -Wall"
 	;;
 c)
 	cc="gcc"
-	opt=
+	opt="-Wextra -Wall"
 	;;
 *)
 	exit 1
 esac
 
 echo $'\E[2;38m================== Compiler ==================\E[m'
-$cc  $opt -Wextra -Wall -c "$name".$type -o "$name".o
+$cc  $opt -c "$name".$type -o "$name".o
 if [ $? != 0 ]; then exit 1; fi
 
 echo $'\E[2;38m=================== Linker ===================\E[m'
