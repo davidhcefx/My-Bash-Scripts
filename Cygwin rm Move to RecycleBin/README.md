@@ -1,6 +1,6 @@
 # A rm replacement on Cygwin.
 
-- Change
+- Ever worried about accidentally deleting something and not being able to recover it? Here are the ways to replace the native `rm` with a safer version of deleting files via moving it to the *Trash bin*.
 
 ## How to install
 
