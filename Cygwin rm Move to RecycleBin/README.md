@@ -14,4 +14,4 @@
 
 	3-2) Add their paths to the PATH variable. For example, add `PATH=$PATH:~/bin` to your `~/.bashrc` and put them under the ~/bin folder.
 
-4. Now, you can simply run `trash` to delete files SAFELY, without worrying yourself accidentally deleting something. You might also prefer to add an alias like: `alias rm='trash'`.
+4. Now, you can simply run `trash` to delete files safely, without worrying yourself accidentally deleting something. You might also prefer adding an alias like: `alias rm='trash'`.
