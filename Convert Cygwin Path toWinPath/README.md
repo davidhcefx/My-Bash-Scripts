@@ -11,4 +11,4 @@ This script converts Cygwin paths to Windows-understandable paths.
 
 2. Now, you can run commands such as `explorer $(toWinPath .)` in order to open up `explorer.exe` under that folder.
 
-<img src="demo.png" alt="screenshot" width="600"/>
+<img src="demo.png" alt="screenshot" width="800"/>
