@@ -1,9 +1,12 @@
 # A rm replacement on Cygwin.
+
+- Change
+
 ## How to install
 
 1. Go to http://www.maddogsw.com/cmdutils/, download the zip, and then take out only **Recycle.exe**.
 
-2. Download the script **toWinPath** from here: https://github.com/davidhcefx/My-Bash-Scripts/blob/master/toWinPath.
+2. Download the script **toWinPath** from [here](https://github.com/davidhcefx/My-Bash-Scripts/tree/master/Convert%20Cygwin%20Path%20toWinPath).
 
 3. Make the above two files *callable* and *runnable*, namely:
 
