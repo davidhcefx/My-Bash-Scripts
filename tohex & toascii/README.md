@@ -3,4 +3,4 @@
 1. Put these files under ~/bin.
 2. Make sure python has been installed.
 
-<img src="screenshot.png" alt="screenshot" width="600">
+<img src="screenshot.png" alt="screenshot" width="00">
