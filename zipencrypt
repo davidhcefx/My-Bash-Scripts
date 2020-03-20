@@ -1,6 +1,6 @@
 #! /bin/bash
 #
-# A script for making compression-with-encryption easier.
+# A script for making compression with encryption easier. (wrapper)
 
 if [ $# != 1 ]; then
 	echo "Syntax: zipencrypt [file]"
