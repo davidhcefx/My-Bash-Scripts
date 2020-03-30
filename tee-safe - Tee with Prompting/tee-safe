@@ -1,0 +1,49 @@
+#! /bin/bash
+#
+# Prompt when overwriting non-empty file with tee. Written by davidhcefx, 2020.3.31.
+
+prompt() {
+	if [[ -e "$1" && -s "$1" ]]; then
+		# Solution on Windows, see https://github.com/davidhcefx/Windows-MessageBox-for-Cmd
+		messagebox "tee" "Overwrite non-empty file '$1'?" yesno
+		if [[ $? == 6 ]]; then
+			return 0
+		else
+			return 1
+		fi
+		# zenity --question --width=300 --title="tee" --text="tee: Overwrite non-empty file \"$1\" ?" 2>/dev/null
+	else
+		return 0
+	fi
+}
+
+if [[ $# == 0 ]]; then
+	tee
+else
+	for arg in "$@"; do
+		case $arg in
+		--help|--version)
+			tee $arg
+			echo "Safe version 'tee-safe' written by davidhcefx."
+			exit
+			;;
+		-a|--append)
+			append=true
+			opts="$opts $arg"
+			shift
+			;;
+		-*) opts="$opts $arg"
+			shift
+			;;
+		*) break
+			;;
+		esac
+	done
+
+	# don't prompt when in append mode
+	if [[ "$append" == "true" ]]; then
+		tee $opts $*
+	else
+		prompt "$1" && tee $opts $*
+	fi
+fi
