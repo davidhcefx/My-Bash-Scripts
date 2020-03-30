@@ -1,6 +1,6 @@
 # tee-safe - Tee with Prompting
 
-- Ever have this catastrophic experience using `tee` to accidentally overwritten some files and couldn't fully recover it? To prevent it from happening again, you need this script!
+- Ever have this catastrophic experience using `tee` to accidentally overwritten some files and couldn't fully recover them? To prevent it from happening again, you need this script!
 
 
 ## Installation
