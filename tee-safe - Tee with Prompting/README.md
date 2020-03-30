@@ -5,7 +5,7 @@
 
 ## Installation
 
-  1. Put this file (`tee-safe`) under your `~/bin` folder.
+  1. Put this file `tee-safe` under your `~/bin` folder.
   
   2. a) If you are on Linux, please ensure that [Zenity](https://packages.ubuntu.com/search?keywords=zenity) has been installed.
 
