@@ -11,7 +11,7 @@ prompt() {
 		#else
 		#	return 1
 		#fi
-		# zenity --question --width=300 --title="tee" --text="tee: Overwrite non-empty file \"$1\" ?" 2>/dev/null
+		zenity --question --width=300 --title="tee" --text="tee: Overwrite non-empty file \"$1\" ?" 2>/dev/null
 	else
 		return 0
 	fi
