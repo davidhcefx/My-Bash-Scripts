@@ -1,3 +1,3 @@
 # Get Cygwin Setup Log
 
-![screenshot](scnshot.png)
+<img src="scnshot.png" width="700">
