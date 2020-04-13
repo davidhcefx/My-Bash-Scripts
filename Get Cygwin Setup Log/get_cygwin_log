@@ -1,0 +1,8 @@
+#! /bin/bash
+#
+# Extract all "Augmented Transaction List", written by davidhcefx, 2020.4.8.
+
+log=/var/log/setup.log
+
+cat $log | sed -n -e '/Augmented\ Transaction\ List/p' \
+				-e 's/^[0-9/]\+\ [0-9:]\+\ \+[0-9]\+\ \+\(install\|erase\)/\ \ \ \ \1/p'
