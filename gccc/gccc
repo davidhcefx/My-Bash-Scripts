@@ -5,47 +5,47 @@
 # Written by davidhcefx, edited in 2018.11.20
 
 gettype() {
-	if [ -f "$1".cpp ]; then
-		echo "cpp"
-	elif [ -f "$1".c ]; then
-		echo "c"
-	else
-		echo "error: couldn't find C-type file" >&2
-	fi
+    if [ -f "$1".cpp ]; then
+        echo "cpp"
+    elif [ -f "$1".c ]; then
+        echo "c"
+    else
+        echo "error: couldn't find C-type file" >&2
+    fi
 }
 
 # Resolve type
 case "$1" in
 *.cpp)
-	name="${1%.cpp}"
-	type="cpp"
-	;;
+    name="${1%.cpp}"
+    type="cpp"
+    ;;
 *.c)
-	name="${1%.c}"
-	type="c"
-	;;
+    name="${1%.c}"
+    type="c"
+    ;;
 *.)  # sometimes you just don't want to type the .cpp/.c
-	name="${1%.}"
-	type=$(gettype "$name")
-	;;
+    name="${1%.}"
+    type=$(gettype "$name")
+    ;;
 *)
-	name="$1"
-	type=$(gettype "$name")
-	;;
+    name="$1"
+    type=$(gettype "$name")
+    ;;
 esac
 
 # Compile options
 case $type in
 cpp)
-	cc="g++"
-	opt="-std=c++11 -Wextra -Wall"
-	;;
+    cc="g++"
+    opt="-std=c++11 -Wextra -Wall"
+    ;;
 c)
-	cc="gcc"
-	opt="-Wextra -Wall"
-	;;
+    cc="gcc"
+    opt="-Wextra -Wall"
+    ;;
 *)
-	exit 1
+    exit 1
 esac
 
 echo $'\E[2;38m================== Compiler ==================\E[m'
@@ -60,7 +60,7 @@ if [ $? != 0 ]; then exit 1; fi
 printf "\E[2;38m> Hit enter to run '$name.out' \E[m"
 read -n 1 ch
 if [ "$ch" == "" ]; then
-	./"$name".out
+    ./"$name".out
 else
-	echo ""
+    echo ""
 fi
