@@ -5,33 +5,31 @@
 # Be sufe to install 'alsa-utils' from Ubuntu apt-get.
 
 showInfo(){
-	echo "Aliases:"
-	echo "	myvol get = amixer -D pulse sget Master"
-	echo "	myvol set x = amixer -D pulse sset Master x%"
-	echo "	myvol add = amixer -D pulse sset Master 2%+"
-	echo "	myvol sub = amixer -D pulse sset Master 2%-"
+    echo "Aliases:"
+    echo "  myvol get = amixer -D pulse sget Master"
+    echo "  myvol set x = amixer -D pulse sset Master x%"
+    echo "  myvol add = amixer -D pulse sset Master 2%+"
+    echo "  myvol sub = amixer -D pulse sset Master 2%-"
 }
 
 if [ $# == 0 ]; then
-	showInfo
+    showInfo
 else
-	case $1 in
-		get)
-			amixer -D pulse sget Master
-		;;
-		set)
-			amixer -D pulse sset Master $2%
-		;;
-		add)
-			amixer -D pulse sset Master 2%+
-		;;
-		sub)
-			amixer -D pulse sset Master 2%-
-		;;
-		*)
-			showInfo
-		;;
-	esac
+    case $1 in
+        get)
+            amixer -D pulse sget Master
+        ;;
+        set)
+            amixer -D pulse sset Master $2%
+        ;;
+        add)
+            amixer -D pulse sset Master 2%+
+        ;;
+        sub)
+            amixer -D pulse sset Master 2%-
+        ;;
+        *)
+            showInfo
+        ;;
+    esac
 fi
-
-
