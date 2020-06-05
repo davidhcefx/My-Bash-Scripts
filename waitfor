@@ -9,7 +9,7 @@ action="shutdown now"
 
 
 help() {
-	echo "Syntax: waitfor [pid]"
+    echo "Syntax: waitfor [pid]"
 }
 
 if [ $# == 0 ]; then help; exit; fi
@@ -20,9 +20,9 @@ echo "Action: '$action'"
 echo "Waiting for..."
 ps --pid $1
 while true; do
-	sleep $interval
-	s=$(ps --pid $1 | grep $1)
-	if [ "$s" == "" ]; then break; fi
+    sleep $interval
+    s=$(ps --pid $1 | grep $1)
+    if [ "$s" == "" ]; then break; fi
 done
 echo "Taking action..."
 $action
