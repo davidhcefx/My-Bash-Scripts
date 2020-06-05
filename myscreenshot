@@ -5,15 +5,15 @@
 
 name=Screenshot_$(date +%Y-%m-%d_%H%M%S)
 case $1 in
-	scale)  # Allow you to selected an area for taking a screenshot.
-		import ~/Pictures/$name.png
-	;;
-	edit)   # Pop up image-editing app right away.
-		import -window root ~/Pictures/$name.png
-		# You can replace `gimp` with other image-editing apps.
-		gimp ~/Pictures/$name.png
-	;;
-	*)   # Take screenshot silently.
-		import -window root ~/Pictures/$name.png
-	;;
+    scale)  # Allow you to selected an area for taking a screenshot.
+        import ~/Pictures/$name.png
+    ;;
+    edit)   # Pop up image-editing app right away.
+        import -window root ~/Pictures/$name.png
+        # You can replace `gimp` with other image-editing apps.
+        gimp ~/Pictures/$name.png
+    ;;
+    *)   # Take screenshot silently.
+        import -window root ~/Pictures/$name.png
+    ;;
 esac
