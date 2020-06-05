@@ -6,28 +6,28 @@ cmdlist=~/.cmdlist
 exe=/tmp/cmdtool.exe
 
 help() {
-	if ! [ -e $cmdlist ]; then
-		echo "  edit		nano $cmdlist" > $cmdlist
-	fi
-	echo "A tool for commandline shortcuts. Syntax: $(basename $0) [option]"
-	echo "Options:"
-	cat $cmdlist
-	echo ""
+    if ! [ -e $cmdlist ]; then
+        echo "  edit		nano $cmdlist" > $cmdlist
+    fi
+    echo "A tool for commandline shortcuts. Syntax: $(basename $0) [option]"
+    echo "Options:"
+    cat $cmdlist
+    echo ""
 }
 
 
 if [ $# == 0 ]; then
-	help
-	exit
+    help
+    exit
 fi
 
 key=$1; shift
 cmd=$(cat $cmdlist | sed -n "/^\ \ $key\t/{s/^\ \ $key//p}" | head -n 1)
 
 if [ "$cmd" == "" ]; then
-	echo "Command not found!"
-	help
+    echo "Command not found!"
+    help
 else
-	echo "$cmd" > $exe
-	bash $exe $@
+    echo "$cmd" > $exe
+    bash $exe $@
 fi
