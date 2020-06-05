@@ -9,8 +9,8 @@
 #     in order to open up explorer.exe under that folder.
 
 if [ $# == 0 ]; then
-	echo "Syntax: toWinPath \"path-to-file\"."
-	exit
+    echo "Syntax: toWinPath \"path-to-file\"."
+    exit
 fi
 
 path="$1"
@@ -25,11 +25,11 @@ path="${path%/}"
 # Replace cygdrive or add C:\cygwin64
 case "$path" in
 /cygdrive/*)
-	path="$(echo ${path#/cygdrive/} | sed 's|/|:/|')"
-	;;
+    path="$(echo ${path#/cygdrive/} | sed 's|/|:/|')"
+    ;;
 *)
-	path="C:/cygwin64$path"
-	;;
+    path="C:/cygwin64$path"
+    ;;
 esac
 
 # Change to backslashes
