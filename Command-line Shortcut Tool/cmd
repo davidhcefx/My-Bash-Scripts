@@ -29,5 +29,5 @@ if [ "$cmd" == "" ]; then
     help
 else
     echo "$cmd" > $exe
-    bash $exe $@
+    bash $exe "$@"
 fi
