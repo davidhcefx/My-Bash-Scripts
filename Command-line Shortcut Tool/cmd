@@ -1,6 +1,8 @@
 #! /bin/bash
 #
 # Written by davidhcefx, 2019.11.7.
+# Format of $cmdlist:
+#   SPACE SPACE KEY TAB (TAB)* COMMAND
 
 cmdlist=~/.cmdlist
 exe=/tmp/cmdtool.exe
