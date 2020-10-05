@@ -1,66 +1,53 @@
 #! /bin/bash
 #
-# My customized C compiler.
+# My wrapper of C compiler.
 # You can create aliases like gcccc, gccccc, etc, all pointing to this file, in case you typed more than three 'c'.
 # Written by davidhcefx, edited in 2018.11.20
 
-gettype() {
+CC="cc -Wall -Wextra"
+GRAY=$'\E[2;38m'
+RESET=$'\E[m'
+
+
+guess_name() {
     if [ -f "$1".cpp ]; then
-        echo "cpp"
+        echo "$1".cpp
     elif [ -f "$1".c ]; then
-        echo "c"
+        echo "$1".c
     else
-        echo "error: couldn't find C-type file" >&2
+        echo "$1"
     fi
 }
 
-# Resolve type
-case "$1" in
-*.cpp)
-    name="${1%.cpp}"
-    type="cpp"
-    ;;
-*.c)
-    name="${1%.c}"
-    type="c"
-    ;;
-*.)  # sometimes you just don't want to type the .cpp/.c
-    name="${1%.}"
-    type=$(gettype "$name")
-    ;;
-*)
+main() {
     name="$1"
-    type=$(gettype "$name")
-    ;;
-esac
+    if ! [ -f "$name" ]; then
+        name=$(guess_name "${name%.}")  # remove '.' if exists
+    fi
 
-# Compile options
-case $type in
-cpp)
-    cc="g++"
-    opt="-std=c++11 -Wextra -Wall"
-    ;;
-c)
-    cc="gcc"
-    opt="-Wextra -Wall"
-    ;;
-*)
-    exit 1
-esac
+    obj_file=/tmp/"${name%.*}".o
+    out_name="${name%.*}".out
 
-echo $'\E[2;38m================== Compiler ==================\E[m'
-$cc  $opt -c "$name".$type -o "$name".o
-if [ $? != 0 ]; then exit 1; fi
+    echo "${GRAY}================== Compiler ==================${RESET}"
+    $CC  -c "$name" -o "$obj_file"
+    if [[ $? != 0 ]]; then
+        exit 1
+    fi
 
-echo $'\E[2;38m=================== Linker ===================\E[m'
-$cc  "$name".o -o "$name".out
-if [ $? != 0 ]; then exit 1; fi
-'rm' "$name".o
+    echo "${GRAY}=================== Linker ===================${RESET}"
+    $CC  "$obj_file" -o "$out_name"
+    if [[ $? != 0 ]]; then
+        exit 1
+    fi
 
-printf "\E[2;38m> Hit enter to run '$name.out' \E[m"
-read -n 1 ch
-if [ "$ch" == "" ]; then
-    ./"$name".out
-else
-    echo ""
-fi
+    printf "${GRAY}> Hit enter to run '$out_name' ${RESET}"
+    read -n 1 ch
+
+    if [ -z "$ch" ]; then
+        ./"$out_name"
+    else
+        echo ""
+    fi
+}
+
+main "$@"
