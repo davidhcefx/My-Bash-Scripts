@@ -9,6 +9,10 @@ GRAY=$'\E[2;38m'
 RESET=$'\E[m'
 
 
+help() {
+    echo "Syntax: $(basename $0) [file] (options)"
+}
+
 guess_name() {
     if [ -f "$1".cpp ]; then
         echo "$1".cpp
@@ -21,10 +25,12 @@ guess_name() {
 
 main() {
     name="$1"
+    shift
     if ! [ -f "$name" ]; then
         name=$(guess_name "${name%.}")  # remove '.' if exists
     fi
 
+    CC="$CC $@"   # remaining options
     obj_file=/tmp/"${name%.*}".o
     out_name="${name%.*}".out
 
@@ -50,4 +56,9 @@ main() {
     fi
 }
 
-main "$@"
+
+if [[ $# == 0 ]]; then
+    help
+else
+    main "$@"
+fi
