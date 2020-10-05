@@ -1,10 +1,10 @@
 #! /bin/bash
 #
-# My wrapper of C compiler.
+# My wrapper of C++ compiler.
 # You can create aliases like gcccc, gccccc, etc, all pointing to this file, in case you typed more than three 'c'.
 # Written by davidhcefx, edited in 2018.11.20
 
-CC="cc -Wall -Wextra"
+CPP="c++ -Wall -Wextra"
 GRAY=$'\E[2;38m'
 RESET=$'\E[m'
 
@@ -30,18 +30,18 @@ main() {
         name=$(guess_name "${name%.}")  # remove '.' if exists
     fi
 
-    CC="$CC $@"   # remaining options
+    CPP="$CPP $@"   # remaining options
     obj_file=/tmp/"${name%.*}".o
     out_name="${name%.*}".out
 
     echo "${GRAY}================== Compiler ==================${RESET}"
-    $CC  -c "$name" -o "$obj_file"
+    $CPP  -c "$name" -o "$obj_file"
     if [[ $? != 0 ]]; then
         exit 1
     fi
 
     echo "${GRAY}=================== Linker ===================${RESET}"
-    $CC  "$obj_file" -o "$out_name"
+    $CPP  "$obj_file" -o "$out_name"
     if [[ $? != 0 ]]; then
         exit 1
     fi
