@@ -1,4 +1,4 @@
-# My Wrapper of C++ compiler.
+# My Wrapper of C++ Compiler.
 
 - Having to compile, run and debug every time is a very cumbersome task.
 
