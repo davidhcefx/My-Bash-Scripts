@@ -21,12 +21,6 @@ yellow() {
     printf "\e[33m$1\e[0m"
 }
 
-do_cmd() {
-    echo "$1"
-    echo ""
-    eval "$1"
-}
-
 list_targets() {
     i=0
     while (( i * 3 < ${#target[@]} )); do
