@@ -1,0 +1,111 @@
+#! /bin/bash
+#
+# Script for file transfer using rsync + ssh. Written by davidhcefx.
+# Can be invoked with args: [idx] [direction] [srcPath] [dstPath]
+
+# Add server below. Format: [user@host] [port] [remote root path]
+target=(
+    "david@127.0.0.1" 22 "/home/david"
+)
+
+idx=
+direction=
+localPath=
+remotePath=
+user=
+port=
+remoteRoot=
+
+
+yellow() {
+    printf "\e[33m$1\e[0m"
+}
+
+do_cmd() {
+    echo "$1"
+    echo ""
+    eval "$1"
+}
+
+list_targets() {
+    i=0
+    while (( i * 3 < ${#target[@]} )); do
+        echo "$(yellow [$i]) ${target[i * 3]} (${target[i * 3 + 1]})"
+        i=$((i + 1))
+    done
+    echo ""
+}
+
+select_target() {
+    if [ -z "$idx" ]; then
+        read -e -p "$(yellow "Target: ")" idx
+        if (( idx < 0 )) || (( idx * 3 >= ${#target[@]} )); then
+            echo "Ivalid index!"
+            exit 1
+        fi
+    fi
+    user=${target[idx * 3]}
+    port=${target[idx * 3 + 1]}
+    remoteRoot=${target[idx * 3 + 2]}
+}
+
+get_local_path() {
+    if [ -z "$localPath" ]; then
+        read -e -p "$(yellow "Local file: ")" localPath
+    fi
+    localPath=$(echo "$localPath" | sed "s:^~:$HOME:")  # tilde expansion
+
+    if ! [ -d $(dirname "localPath") ]; then
+        echo "Ivalid path!";
+        exit 1;
+    fi
+}
+
+get_remote_path() {
+    if [ -z "$remotePath" ]; then
+        read -e -p "$(yellow "Remote path: [$remoteRoot/]: ")" remotePath
+    fi
+    remotePath="$remoteRoot/$remotePath"
+}
+
+main() {
+    list_targets
+    select_target
+
+    if [ -z "$direction" ]; then
+        read -e -p "$(yellow "Direction: (to/from) ")" direction
+    fi
+    case "$direction" in
+        to)
+            get_local_path
+            get_remote_path
+            set -x
+            rsync -av --delete -e "ssh -p $port" "$localPath" $user:"$remotePath"
+            set +x
+        ;;
+        from)
+            localPath="/tmp/sshrsync_$(date +%F_%H.%M.%S)/"
+            mkdir -p $localPath
+            get_remote_path
+            set -x
+            rsync -av -e "ssh -p $port" $user:"$remotePath" "$localPath"
+            set +x
+        ;;
+    esac
+}
+
+# parse arguments if any
+if (( $# >= 4 )); then
+    idx=$1
+    direction=$2
+    if [[ $2 == to ]]; then
+        localPath="$3"
+        remotePath="$4"
+    else
+        remotePath="$3"
+        localPath="$4"
+    fi
+    shift; shift; shift; shift
+fi
+
+main
