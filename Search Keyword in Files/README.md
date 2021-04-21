@@ -1,6 +1,6 @@
 # Search Keyword in Files
 
-Search for keywords in files reachable from current directory.
+Searching for cross references within a huge code base can be cumbersome. This is a simple and efficient tool to perform file-content search within a subdirectory.
 
 ## Usage
 
