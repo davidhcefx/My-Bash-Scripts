@@ -8,7 +8,7 @@ import string
 from subprocess import run, PIPE
 from argparse import ArgumentParser, Namespace
 
-DEFAULT_EXT = 'c|cpp'
+DEFAULT_EXT = '.h|.c|.cpp'
 
 
 def green(text):
@@ -28,8 +28,10 @@ def main(args: Namespace):
     elif ext.startswith('(') and ext.endswith(')'):
         ext.strip('()')
 
-    res = run(['find', ('-L' if args.symlink else '-P'), '.', '-type', 'f', '-regex',
-            '.*/.*\\.\\(' + ext.replace('|', '\\|') + '\\)'], stdout=PIPE, check=True)
+    regex = '.*/.*\\(' + ext.replace('.', '\\.').replace('|', '\\|') + '\\)'
+    res = run(['find', '-L' if args.symlink else '-P', '.', '-type', 'f', '-regex', regex],
+              stdout=PIPE,
+              check=True)
 
     if len(res.stdout) == 0:
         raise SystemExit("It seems that no file match extension '{}'".format(ext))
@@ -43,10 +45,10 @@ def main(args: Namespace):
 
     for name in res.stdout.decode('utf8').strip('\n').split('\n'):
         name_shown = False
-        for line in open(name, 'rb').read().split(b'\n'):  # type: bytes
+        for i, line in enumerate(open(name, 'rb').read().split(b'\n')):  # type: bytes
             if search_str.encode('utf8') in (line.upper() if args.icase else line):
                 if not name_shown or args.verbose:
-                    print(green(name))
+                    print(green('{}:{}'.format(name, i + 1)))
                     name_shown = True
 
                 pattern = ('(?i)' if args.icase else '') + escape_regex(search_str)
@@ -70,3 +72,5 @@ if __name__ == '__main__':
 # - 2/1:
 #   - grep pattern case-insensitively, prefer (X if C else Y) over (C and X or Y)
 #   - reduce encode/decode usage
+# - 6/8:
+#   - change extension representation to .h, show line number
