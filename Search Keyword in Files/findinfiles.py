@@ -11,6 +11,9 @@ from argparse import ArgumentParser, Namespace
 DEFAULT_EXT = '.h|.c|.cpp'
 
 
+def cyan(text):
+    return "\33[36m" + text + "\33[0m"
+
 def green(text):
     return "\33[32m" + text + "\33[0m"
 
@@ -28,7 +31,7 @@ def main(args: Namespace):
     elif ext.startswith('(') and ext.endswith(')'):
         ext.strip('()')
 
-    regex = '.*/.*\\(' + ext.replace('.', '\\.').replace('|', '\\|') + '\\)'
+    regex = '.*/.*\\(' + ext.replace('|', '\\|').replace('.', '\\.') + '\\)'
     res = run(['find', '-L' if args.symlink else '-P', '.', '-type', 'f', '-regex', regex],
               stdout=PIPE,
               check=True)
@@ -38,27 +41,19 @@ def main(args: Namespace):
 
     # configure search string
     search_str = input('Search string: ')
-    if args.icase:
-        search_str = search_str.upper()
-
+    grep_pattern = '{}{}'.format('(?i)' if args.icase else '', escape_regex(search_str))
     print("Searching for '{}' ...".format(search_str))
 
     for name in res.stdout.decode('utf8').strip('\n').split('\n'):
-        name_shown = False
-        for i, line in enumerate(open(name, 'rb').read().split(b'\n')):  # type: bytes
-            if search_str.encode('utf8') in (line.upper() if args.icase else line):
-                if not name_shown or args.verbose:
-                    print(green('{}:{}'.format(name, i + 1)))
-                    name_shown = True
-
-                pattern = ('(?i)' if args.icase else '') + escape_regex(search_str)
-                run(['grep', '--color=always', '-P', pattern], input=line, check=True)
+        r = run(['grep', '--color=always', '-n', '-P', grep_pattern, name], stdout=PIPE)
+        if len(r.stdout) > 0:
+            print(cyan(name))
+            print(r.stdout.decode('utf8'), end='')
 
 
 if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument('-i', dest='icase', action='store_true', help='case insensitive search')
-    parser.add_argument('-v', dest='verbose', action='store_true', help='verbose')
     parser.add_argument('-nL', dest='symlink', action='store_false',
                         help='do not follow symbolic link when listing files')
     main(args=parser.parse_args())
@@ -74,3 +69,5 @@ if __name__ == '__main__':
 #   - reduce encode/decode usage
 # - 6/8:
 #   - change extension representation to .h, show line number
+# - 6/11:
+#   - simply use grep to do all the stuff
