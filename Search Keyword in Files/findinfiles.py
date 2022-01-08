@@ -12,10 +12,10 @@ DEFAULT_EXT = '.h|.c|.cpp'
 
 
 def cyan(text):
-    return "\33[36m" + text + "\33[0m"
+    return '\33[36m' + text + '\33[0m'
 
 def green(text):
-    return "\33[32m" + text + "\33[0m"
+    return '\33[32m' + text + '\33[0m'
 
 def escape_regex(text):
     return text.translate({ord(p): '\\' + p for p in string.punctuation})
@@ -37,15 +37,15 @@ def main(args: Namespace):
               check=True)
 
     if len(res.stdout) == 0:
-        raise SystemExit("It seems that no file match extension '{}'".format(ext))
+        raise SystemExit('It seems that no file match extension "{}"'.format(ext))
 
     # configure search string
     search_str = input('Search string: ')
     grep_pattern = '{}{}'.format('(?i)' if args.icase else '', escape_regex(search_str))
-    print("Searching for '{}' ...".format(search_str))
+    print('Searching for "{}" ...'.format(search_str))
 
     for name in res.stdout.decode('utf8').strip('\n').split('\n'):
-        r = run(['grep', '--color=always', '-n', '-P', grep_pattern, name], stdout=PIPE)
+        r = run(['grep', '--color=always', '-n', '-P', grep_pattern, name], stdout=PIPE, check=True)
         if len(r.stdout) > 0:
             print(cyan(name))
             print(r.stdout.decode('utf8'), end='')
