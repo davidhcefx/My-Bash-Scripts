@@ -8,7 +8,7 @@ import string
 from subprocess import run, PIPE
 from argparse import ArgumentParser, Namespace
 
-DEFAULT_EXT = '.h|.c|.cpp'
+DEFAULT_EXT = 'h c cpp'
 
 
 def cyan(text):
@@ -22,16 +22,10 @@ def escape_regex(text):
 
 def main(args: Namespace):
     # configure extension
-    ext = input('Extensions: [{}] '.format(DEFAULT_EXT))
+    ext = input('Extensions: [{}] '.format(DEFAULT_EXT)) or DEFAULT_EXT
+    ext = list(map(lambda x: '\\.' + x.strip('.'), ext.split()))  # remove dots if exists
 
-    if ext == '':
-        ext = DEFAULT_EXT
-    elif ext.startswith('[') and ext.endswith(']'):
-        ext.strip('[]')
-    elif ext.startswith('(') and ext.endswith(')'):
-        ext.strip('()')
-
-    regex = '.*/.*\\(' + ext.replace('|', '\\|').replace('.', '\\.') + '\\)'
+    regex = '.*\\({}\\)'.format('\\|'.join(ext))
     res = run(['find', '-L' if args.symlink else '-P', '.', '-type', 'f', '-regex', regex],
               stdout=PIPE,
               check=True)
@@ -71,3 +65,5 @@ if __name__ == '__main__':
 #   - change extension representation to .h, show line number
 # - 6/11:
 #   - simply use grep to do all the stuff
+# - 2/8:
+#   - simplify what needed to be entered as extensions, correct `-regex` option usage.
