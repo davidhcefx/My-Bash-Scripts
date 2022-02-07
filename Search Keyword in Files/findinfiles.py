@@ -45,7 +45,7 @@ def main(args: Namespace):
     print('Searching for "{}" ...'.format(search_str))
 
     for name in res.stdout.decode('utf8').strip('\n').split('\n'):
-        r = run(['grep', '--color=always', '-n', '-P', grep_pattern, name], stdout=PIPE, check=True)
+        r = run(['grep', '--color=always', '-n', '-P', grep_pattern, name], stdout=PIPE)
         if len(r.stdout) > 0:
             print(cyan(name))
             print(r.stdout.decode('utf8'), end='')
