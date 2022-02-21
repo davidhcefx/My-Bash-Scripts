@@ -11,25 +11,23 @@ from argparse import ArgumentParser, Namespace
 DEFAULT_EXT = 'h c cpp'
 
 
-def cyan(text):
+def cyan(text: str) -> str:
     return '\33[36m' + text + '\33[0m'
 
-def green(text):
+def green(text: str) -> str:
     return '\33[32m' + text + '\33[0m'
 
-def escape_regex(text):
+def escape_regex(text: str) -> str:
     return text.translate({ord(p): '\\' + p for p in string.punctuation})
 
 def main(args: Namespace):
     # configure extension
     ext = input('Extensions: [{}] '.format(DEFAULT_EXT)) or DEFAULT_EXT
     ext = list(map(lambda x: '\\.' + x.strip('.'), ext.split()))  # remove dots if exists
-
     regex = '.*\\({}\\)'.format('\\|'.join(ext))
     res = run(['find', '-L' if args.symlink else '-P', '.', '-type', 'f', '-regex', regex],
               stdout=PIPE,
               check=True)
-
     if len(res.stdout) == 0:
         raise SystemExit('It seems that no file match extension "{}"'.format(ext))
 
@@ -50,7 +48,7 @@ if __name__ == '__main__':
     parser.add_argument('-i', dest='icase', action='store_true', help='case insensitive search')
     parser.add_argument('-nL', dest='symlink', action='store_false',
                         help='do not follow symbolic link when listing files')
-    main(args=parser.parse_args())
+    main(parser.parse_args())
 
 
 
