@@ -1,8 +1,9 @@
 # Trash - A rm replacement on Cygwin
 
-- Ever worried about accidentally deleting something and not being able to recover it? Here are the ways to replace the native `rm` with a safer version of deleting files via moving it to the *Trash bin*.
+- Ever worried about accidentally deleting something and not being able to recover it? Here is a method to replace the native `rm` with a safer version of deleting files via moving it to the *Trash bin*.
 
-## How to install
+
+## How to Install
 
 1. Go to http://www.maddogsw.com/cmdutils/, download the zip, and then take out only **Recycle.exe**.
 
