@@ -2,16 +2,16 @@
 #
 # Script for file transfer using rsync + ssh. Written by davidhcefx, 2021.4.2.
 
-## Add server below; format: <alias> <user@host> <port> <remote root path/>
-servers=(
+## Add hosts below; Format: <alias> <user@host> <port> <remote home path/>
+hosts=(
     "local" "david@127.0.0.1"       22  "/home/david/"
 )
 
-nb_column=4  # number of columns in servers
+nb_column=4  # number of columns in hosts
 host=
 port=
 # TODO: is remote home really needed?
-remote_root=
+remote_home=
 alias_name=
 direction=
 src_path=
@@ -22,17 +22,17 @@ function yellow() {
     printf "\e[33m$1\e[0m"
 }
 
-function list_servers() {
-    for ((i = 0; i < ${#servers[@]}; i += $nb_column)); do
-        echo -e "$(yellow "[${servers[i]}]")\t${servers[i + 1]} (${servers[i + 2]})"
+function list_targets() {
+    for ((i = 0; i < ${#hosts[@]}; i += $nb_column)); do
+        echo -e "$(yellow "[${hosts[i]}]")\t${hosts[i + 1]} (${hosts[i + 2]})"
     done
     echo ""
 }
 
 # return idx of alias name, or -1 if failed
 function find_idx_of_alias() {
-    for ((i = 0; i < ${#servers[@]}; i += $nb_column)); do
-        if [[ ${servers[i]} == "$1" ]]; then
+    for ((i = 0; i < ${#hosts[@]}; i += $nb_column)); do
+        if [[ ${hosts[i]} == "$1" ]]; then
             return $i
         fi
     done
@@ -45,13 +45,13 @@ function select_target() {
     fi
     find_idx_of_alias "$alias_name"
     idx=$?
-    if (( idx >= ${#servers[@]} )); then
+    if (( idx >= ${#hosts[@]} )); then
         echo "Error: Alias name not found!"
         exit 1
     fi
-    host="${servers[idx + 1]}"
-    port="${servers[idx + 2]}"
-    remote_root="${servers[idx + 3]}"
+    host="${hosts[idx + 1]}"
+    port="${hosts[idx + 2]}"
+    remote_home="${hosts[idx + 3]}"
 }
 
 # set direction from stdin if not set
@@ -71,8 +71,8 @@ function set_src_dst_paths() {
             echo "Error: File not found!";
             exit 1;
         fi
-        read -rep "$(yellow "Remote path: $remote_root/")" remote_path
-        remote_path="$remote_root/$remote_path"
+        read -rep "$(yellow "Remote path: $remote_home/")" remote_path
+        remote_path="$remote_home/$remote_path"
 
         case "$direction" in
         to)
@@ -113,7 +113,7 @@ function set_src_dst_paths() {
 }
 
 function main() {
-    list_servers
+    list_targets
     select_target
     set_direction
     set_src_dst_paths "$@"
