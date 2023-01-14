@@ -2,16 +2,14 @@
 #
 # Script for file transfer using rsync + ssh. Written by davidhcefx, 2021.4.2.
 
-## Add hosts below; Format: <alias> <user@host> <port> <remote home path/>
+## Add host below; Format: <alias> <user@host> <port>
 hosts=(
-    "local" "david@127.0.0.1"       22  "/home/david/"
+    "local" "david@127.0.0.1"       22
 )
 
-nb_column=4  # number of columns in hosts
+nb_column=3  # number of columns in hosts
 host=
 port=
-# TODO: is remote home really needed?
-remote_home=
 alias_name=
 direction=
 src_path=
@@ -51,7 +49,6 @@ function select_target() {
     fi
     host="${hosts[idx + 1]}"
     port="${hosts[idx + 2]}"
-    remote_home="${hosts[idx + 3]}"
 }
 
 # set direction from stdin if not set
@@ -61,25 +58,33 @@ function set_direction() {
     fi
 }
 
+function prompt_for_local_path() {
+    read -rep "$(yellow "Local file: ")" local_path
+    # TODO: is tilde expansion necessary?
+    local_path=$(sed "s:^~:$HOME:" <<< "$local_path")  # tilde expansion
+}
+
+function prompt_for_remote_path() {
+    read -rep "$(yellow "Remote path (relative/absolute): ")" remote_path
+}
+
 # set src_path and dst_path from stdin or args (with user@host prefix)
 function set_src_dst_paths() {
     if (( $# < 2 )); then
-        # from stdin
-        read -rep "$(yellow "Local file: ")" local_path
-        local_path=$(sed "s:^~:$HOME:" <<< "$local_path")  # tilde expansion
-        if ! [ -e "$local_path" ]; then
-            echo "Error: File not found!";
-            exit 1;
-        fi
-        read -rep "$(yellow "Remote path: $remote_home/")" remote_path
-        remote_path="$remote_home/$remote_path"
-
         case "$direction" in
         to)
+            prompt_for_local_path
+            if ! [ -e "$local_path" ]; then
+                echo "Error: File not found!";
+                exit 1;
+            fi
+            prompt_for_remote_path
             src_path="$local_path"
             dst_path="$host:$remote_path"
             ;;
         from)
+            prompt_for_remote_path
+            prompt_for_local_path
             src_path="$host:$remote_path"
             dst_path="$local_path"
             ;;
@@ -118,8 +123,8 @@ function main() {
     set_direction
     set_src_dst_paths "$@"
 
-    echo -ne "[ ${src_path[@]} ] >>>\t[ $dst_path ] ? "
-    read -re _
+    echo -ne "[ ${src_path[@]} ] >>>\t[ $dst_path ] ?"
+    read -rep " " _
     rsync -av --delete -e "ssh -p $port" "${src_path[@]}" "$dst_path"
 }
 
