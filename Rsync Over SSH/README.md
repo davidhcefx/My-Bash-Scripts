@@ -1,15 +1,31 @@
 # Rsync Over SSH
 
-This is an interactive script for file transfer using `rsync` + `ssh`.
+An interactive script to make file transfer with `rsync` + `ssh` easier.
+
+
+## Introduction
+
+The usual way for `rsync` over `ssh` was:
+
+```sh
+$ rsync -av -delete -e 'ssh -p 22' user@<remote-ip-address>:/remote/path /local/path
+```
+
+Basing on that, this script provides additional features such as:
+
+- Config short aliases for each host IP addresses (eg. "lab").
+    + For each host, remember their ports and home directories.
+- Interactive host selection.
+- Non-interactive support, i.e. by passing program arguments.
 
 
 ## Usage
 
-1. Invoke without argument: `sshrsync`, and then follow the guide.
+```
+Syntax: sshrsync [-a alias] [-d (to|from)] [src_path]... [dst_path]
+        The paths can be either relative or absolute.
+```
 
-2. Invoke with arguments: `sshrsync to /home/david/new_file /home/remote/folder/`.
+Please edit the script and add your hosts before running it. By passing no argument, it would enter interactive mode.
 
-
-## Screenshot
-
-![screenshot](screenshot.png)
+<img src="screenshot.png" alt="Screenshot. For interactive usage, simply type sshrsync. For Non-interactive, type eg. sshrync -a lab -d to ./local/path ./remote/path." width="90%" />

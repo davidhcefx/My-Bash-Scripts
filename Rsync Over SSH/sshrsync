@@ -1,105 +1,138 @@
 #! /bin/bash
 #
-# Script for file transfer using rsync + ssh. Written by davidhcefx.
-# Can be invoked with args: [idx] [direction] [srcPath] [dstPath]
+# Script for file transfer using rsync + ssh. Written by davidhcefx, 2021.4.2.
 
-# Add server below. Format: [user@host] [port] [remote root path]
-target=(
-    "david@127.0.0.1" 22 "/home/david"
+## Add server below; format: <alias> <user@host> <port> <remote root path/>
+servers=(
+    "local" "david@127.0.0.1"       22  "/home/david/"
 )
 
-idx=
-direction=
-localPath=
-remotePath=
-user=
+nb_column=4  # number of columns in servers
+host=
 port=
-remoteRoot=
+remote_root=
+alias_name=
+direction=
+src_path=
+dst_path=
 
 
-yellow() {
+function yellow() {
     printf "\e[33m$1\e[0m"
 }
 
-list_targets() {
-    i=0
-    while (( i * 3 < ${#target[@]} )); do
-        echo "$(yellow [$i]) ${target[i * 3]} (${target[i * 3 + 1]})"
-        i=$((i + 1))
+function list_servers() {
+    for ((i = 0; i < ${#servers[@]}; i += $nb_column)); do
+        echo -e "$(yellow [${servers[i]}])\t${servers[i + 1]} (${servers[i + 2]})"
     done
     echo ""
 }
 
-select_target() {
-    if [ -z "$idx" ]; then
-        read -e -p "$(yellow "Target: ")" idx
-        if (( idx < 0 )) || (( idx * 3 >= ${#target[@]} )); then
-            echo "Ivalid index!"
-            exit 1
+# return idx of alias name, or -1 if failed
+function find_idx_of_alias() {
+    for ((i = 0; i < ${#servers[@]}; i += $nb_column)); do
+        if [[ ${servers[i]} == "$1" ]]; then
+            return $i
         fi
-    fi
-    user=${target[idx * 3]}
-    port=${target[idx * 3 + 1]}
-    remoteRoot=${target[idx * 3 + 2]}
+    done
+    return 255
 }
 
-get_local_path() {
-    if [ -z "$localPath" ]; then
-        read -e -p "$(yellow "Local file: ")" localPath
+function select_target() {
+    if [ -z "$alias_name" ]; then
+        read -rep "$(yellow "Target: ")" alias_name
     fi
-    localPath=$(echo "$localPath" | sed "s:^~:$HOME:")  # tilde expansion
-
-    if ! [ -d $(dirname "localPath") ]; then
-        echo "Ivalid path!";
-        exit 1;
+    find_idx_of_alias "$alias_name"
+    idx=$?
+    if (( idx >= ${#servers[@]} )); then
+        echo "Error: Alias name not found!"
+        exit 1
     fi
+    host="${servers[idx + 1]}"
+    port="${servers[idx + 2]}"
+    remote_root="${servers[idx + 3]}"
 }
 
-get_remote_path() {
-    if [ -z "$remotePath" ]; then
-        read -e -p "$(yellow "Remote path: [$remoteRoot/]: ")" remotePath
-    fi
-    remotePath="$remoteRoot/$remotePath"
-}
-
-main() {
-    list_targets
-    select_target
-
+# set direction from stdin if not set
+function set_direction() {
     if [ -z "$direction" ]; then
-        read -e -p "$(yellow "Direction: (to/from) ")" direction
+        read -rep "$(yellow "Direction: [to|from] ")" direction
     fi
-    case "$direction" in
+}
+
+# set src_path and dst_path from stdin or args (with user@host prefix)
+function set_src_dst_paths() {
+    if (( $# < 2 )); then
+        # from stdin
+        read -rep "$(yellow "Local file: ")" local_path
+        local_path=$(sed "s:^~:$HOME:" <<< "$local_path")  # tilde expansion
+        if ! [ -e "$local_path" ]; then
+            echo "Error: File not found!";
+            exit 1;
+        fi
+        read -rep "$(yellow "Remote path: $remote_root/")" remote_path
+        remote_path="$remote_root/$remote_path"
+
+        case "$direction" in
         to)
-            get_local_path
-            get_remote_path
-            set -x
-            rsync -av --delete -e "ssh -p $port" "$localPath" $user:"$remotePath"
-            set +x
-        ;;
+            src_path="$local_path"
+            dst_path="$host:$remote_path"
+            ;;
         from)
-            localPath="/tmp/sshrsync_$(date +%F_%H.%M.%S)/"
-            mkdir -p $localPath
-            get_remote_path
-            set -x
-            rsync -av -e "ssh -p $port" $user:"$remotePath" "$localPath"
-            set +x
-        ;;
-    esac
+            src_path="$host:$remote_path"
+            dst_path="$local_path"
+            ;;
+        *) exit 1
+        esac
+    else
+        # from args
+        src_path=("${@:1:(($#-1))}")
+        shift $(($# - 1))
+        dst_path="$1"
+
+        case "$direction" in
+        to)
+            dst_path="$host:$dst_path"
+            ;;
+        from)
+            if (( ${#src_path[@]} > 1 )); then
+                echo -e "$(yellow Warning): Multiple remote files doesn't seem correct!\n"
+            fi
+            src_path="$host:$src_path"
+            ;;
+        *) exit 1
+        esac
+    fi
+    # safety check
+    if [[ $src_path == */ ]]; then
+        echo -e "$(yellow Warning): Coping folder *contents* instead of the whole folder" \
+            "might be dangerous! (eg. Overwrite all contents under home)\n"
+    fi
+}
+
+function main() {
+    list_servers
+    select_target
+    set_direction
+    set_src_dst_paths "$@"
+
+    echo -ne "[ ${src_path[@]} ] >>>\t[ $dst_path ] ? "
+    read -re _
+    rsync -av --delete -e "ssh -p $port" "${src_path[@]}" "$dst_path"
 }
 
 # parse arguments if any
-if (( $# >= 4 )); then
-    idx=$1
-    direction=$2
-    if [[ $2 == to ]]; then
-        localPath="$3"
-        remotePath="$4"
-    else
-        remotePath="$3"
-        localPath="$4"
-    fi
-    shift; shift; shift; shift
-fi
-
-main
+while getopts "ha:d:" opt; do
+    case $opt in
+    h) echo "Syntax: $(basename $0) [-a alias] [-d (to|from)] [src_path]... [dst_path]"
+        exit 0
+        ;;
+    a) alias_name="$OPTARG"
+        ;;
+    d) direction="$OPTARG"
+        ;;
+    *) exit 1
+    esac
+done
+shift $((OPTIND - 1))
+main "$@"
