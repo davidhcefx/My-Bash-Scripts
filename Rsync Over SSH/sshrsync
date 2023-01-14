@@ -10,6 +10,7 @@ servers=(
 nb_column=4  # number of columns in servers
 host=
 port=
+# TODO: is remote home really needed?
 remote_root=
 alias_name=
 direction=
@@ -23,7 +24,7 @@ function yellow() {
 
 function list_servers() {
     for ((i = 0; i < ${#servers[@]}; i += $nb_column)); do
-        echo -e "$(yellow [${servers[i]}])\t${servers[i + 1]} (${servers[i + 2]})"
+        echo -e "$(yellow "[${servers[i]}]")\t${servers[i + 1]} (${servers[i + 2]})"
     done
     echo ""
 }
@@ -95,6 +96,7 @@ function set_src_dst_paths() {
             dst_path="$host:$dst_path"
             ;;
         from)
+            # TODO: multiple src files support?
             if (( ${#src_path[@]} > 1 )); then
                 echo -e "$(yellow Warning): Multiple remote files doesn't seem correct!\n"
             fi
@@ -125,6 +127,7 @@ function main() {
 while getopts "ha:d:" opt; do
     case $opt in
     h) echo "Syntax: $(basename $0) [-a alias] [-d (to|from)] [src_path]... [dst_path]"
+        echo -e "\tThe paths can be either relative or absolute."
         exit 0
         ;;
     a) alias_name="$OPTARG"

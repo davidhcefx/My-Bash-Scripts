@@ -28,4 +28,4 @@ Syntax: sshrsync [-a alias] [-d (to|from)] [src_path]... [dst_path]
 
 Please edit the script and add your hosts before running it. By passing no argument, it would enter interactive mode.
 
-<img src="screenshot.png" alt="Screenshot. For interactive usage, simply type sshrsync. For Non-interactive, type eg. sshrync -a lab -d to ./local/path ./remote/path." width="90%" />
+<img src="screenshot.png" alt="Screenshot. For interactive usage, simply type sshrsync. For Non-interactive, type eg. sshrync -a lab -d to ./local/path ./remote/path." width="80%" />
