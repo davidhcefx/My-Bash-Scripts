@@ -60,12 +60,19 @@ function set_direction() {
 
 function prompt_for_local_path() {
     read -rep "$(yellow "Local file: ")" local_path
-    # TODO: is tilde expansion necessary?
     local_path=$(sed "s:^~:$HOME:" <<< "$local_path")  # tilde expansion
 }
 
 function prompt_for_remote_path() {
     read -rep "$(yellow "Remote path (relative/absolute): ")" remote_path
+}
+
+# prefix each arg with ':' and store to $result
+function prefix_each_with_colon() {
+    result=()
+    for arg in "$@"; do
+        result+=(":$arg")
+    done
 }
 
 # set src_path and dst_path from stdin or args (with user@host prefix)
@@ -88,7 +95,8 @@ function set_src_dst_paths() {
             src_path="$host:$remote_path"
             dst_path="$local_path"
             ;;
-        *) exit 1
+        *)
+            exit 1
         esac
     else
         # from args
@@ -101,13 +109,12 @@ function set_src_dst_paths() {
             dst_path="$host:$dst_path"
             ;;
         from)
-            # TODO: multiple src files support?
-            if (( ${#src_path[@]} > 1 )); then
-                echo -e "$(yellow Warning): Multiple remote files doesn't seem correct!\n"
-            fi
-            src_path="$host:$src_path"
+            prefix_each_with_colon "${src_path[@]}"
+            src_path=("${result[@]}")
+            src_path[0]="${host}${src_path[0]}"
             ;;
-        *) exit 1
+        *)
+            exit 1
         esac
     fi
     # safety check
@@ -139,7 +146,8 @@ while getopts "ha:d:" opt; do
         ;;
     d) direction="$OPTARG"
         ;;
-    *) exit 1
+    *)
+        exit 1
     esac
 done
 shift $((OPTIND - 1))
