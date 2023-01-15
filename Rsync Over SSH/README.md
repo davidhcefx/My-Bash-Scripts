@@ -13,10 +13,10 @@ $ rsync -av -delete -e 'ssh -p 22' user@<remote-ip-address>:/remote/path /local/
 
 Basing on that, this script provides additional features such as:
 
-- Config short aliases for each host IP addresses (eg. "lab").
-    + For each host, remember their ports and home directories.
+- Config short aliases for each host addresses (eg. "lab"), as well as their ports.
 - Interactive host selection.
 - Non-interactive support, i.e. by passing program arguments.
+- Simplified usage, i.e. typing lesser to achieve the same thing.
 
 
 ## Usage
