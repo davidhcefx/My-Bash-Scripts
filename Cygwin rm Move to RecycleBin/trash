@@ -1,31 +1,42 @@
 #! /bin/bash
 #
-# A rm replacement on Cygwin, using Recycle.exe (http://www.maddogsw.com/cmdutils/) and toWinPath
+# A rm replacement on Cygwin, using Recycle.exe (http://www.maddogsw.com/cmdutils) and toWinPath
 # (https://github.com/davidhcefx/My-Bash-Scripts/tree/master/Convert%20Cygwin%20Path%20toWinPath).
 # Created by davidhcefx, 2019.11.8.
 
-files=()
-retVal=0
+file_list=()
+flags="-f"  # force by default
+ret_val=0
+
 
 if [ $# -eq 0 ]; then
     Recycle.exe "/?"
     exit
 fi
 
-for f in "$@"; do
-    case "$f" in
-    -r) ;;  # obmit -r as Recycle doesn't need it
-    *)
-        if [ -e "$f" ]; then
-            files+=("$(toWinPath "$f")")
-        else
-            echo "trash: cannot remove '$f': No such file or directory" >&2
-            retVal=1
-        fi
-    ;;
+while getopts "hfiIrRdv" opt; do
+    case $opt in
+    h) Recycle.exe "/?"
+        exit
+        ;;
+    i|I) flags=""
+        ;;
+    v) set -x
+        ;;
+    *) ;;  # ignore other flags
     esac
 done
+shift $((OPTIND - 1))
 
-echo "Removing ${#files[@]} file(s)..." >&2
-Recycle.exe -f "${files[@]}" || retVal=$?
-exit $retVal
+for f in "$@"; do
+    if [ -e "$f" ]; then
+        file_list+=("$(toWinPath "$f")")
+    else
+        echo "trash: cannot remove '$f': No such file or directory" >&2
+        ret_val=1
+    fi
+done
+
+echo "Removing ${#file_list[@]} file(s)..." >&2
+Recycle.exe $flags "${file_list[@]}" || exit $?
+exit $ret_val

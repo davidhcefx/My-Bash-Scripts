@@ -17,4 +17,4 @@
 
 4. Now, you can simply run `trash` to delete files safely, without worrying yourself accidentally deleting something. You might also prefer adding an alias like: `alias rm='trash'`.
 
-<img src="res/trash.png" width="400px">
+<img src="img/trash.png" width="400px">
