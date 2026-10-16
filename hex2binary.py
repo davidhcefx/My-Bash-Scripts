@@ -4,7 +4,6 @@ from sys import stderr, stdout
 from os import write
 from math import ceil
 
-
 def hex2bin(hx: str) -> bytes:
     if hx.startswith('0x'):
         hx = hx[2:]
@@ -15,4 +14,11 @@ def hex2bin(hx: str) -> bytes:
 if __name__ == '__main__':
     print('Hex string input:', file=stderr)
     hx = input('').strip()
-    write(stdout.fileno(), hex2bin(hx))
+    if stdout.isatty():
+        outfile = input('Output filename: [output.bin] ').strip()
+        if outfile == '':
+            outfile = 'output.bin'
+        with open(outfile, 'wb') as f:
+            f.write(hex2bin(hx))
+    else:
+        write(stdout.fileno(), hex2bin(hx))
